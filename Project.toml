@@ -1,7 +1,10 @@
-name = "AtomicMass"
+name = "AME"
 uuid = "9f60cadd-00eb-4e57-b715-beb4ff532cb8"
 authors = ["jinshaoliang <18322825326@163.com> and contributors"]
-version = "1.0.0-DEV"
+version = "0.0.1"
+
+[deps]
+Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 julia = "1"

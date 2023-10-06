@@ -1,6 +1,6 @@
-using AtomicMass
+using AME
 using Test
 
-@testset "AtomicMass.jl" begin
+@testset "AME.jl" begin
     # Write your tests here.
 end
