@@ -4,7 +4,7 @@ authors = ["jinshaoliang <18322825326@163.com> and contributors"]
 version = "0.0.1"
 
 [deps]
-Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
+Measurements = "eff96d63-e80a-5855-80a2-b1b0885c5ab7"
 
 [compat]
 julia = "1"
