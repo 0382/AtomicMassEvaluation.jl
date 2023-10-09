@@ -1,3 +1,8 @@
+"""
+    Isotope
+Isotope is a struct that contains the information of an isotope.
+The information includes the proton number, neutron number, element symbol, decay mode, mass, binding energy, beta decay energy, and atomic mass.
+"""
 struct Isotope
     N::Int
     Z::Int
@@ -23,7 +28,7 @@ function parse_ame2020_line(line::AbstractString)
     N + Z == A || error("N + Z != A")
     element = strip(line[21:23])
     decay_mode = strip(line[24:27])
-    
+
     # parse mass
     tstr = strip(line[29:42])
     mass_is_esitimated = false
@@ -38,7 +43,7 @@ function parse_ame2020_line(line::AbstractString)
     end
     mass_uncertainty = parse(Float64, tstr)
     mass = measurement(mass_value / 1000, mass_uncertainty / 1000)
-    
+
     # parse binding energy
     tstr = strip(line[55:67])
     binding_energy_is_estimated = false
@@ -90,15 +95,60 @@ function parse_ame2020_line(line::AbstractString)
     return Isotope(N, Z, element, decay_mode, mass, binding_energy, beta_decay_energy, atomic_mass, mass_is_esitimated, binding_energy_is_estimated, beta_decay_energy_is_estimated, atomic_mass_is_estimated)
 end
 
+"""
+    getZ(iso::Isotope)
+get the proton number of the isotope
+"""
 getZ(iso::Isotope) = iso.Z
+"""
+    getN(iso::Isotope)
+get the neutron number of the isotope
+"""
 getN(iso::Isotope) = iso.N
+"""
+    getA(iso::Isotope)
+get the mass number of the isotope
+"""
 getA(iso::Isotope) = iso.N + iso.Z
+"""
+    element(iso::Isotope)
+get the element symbol of the isotope
+"""
 element(iso::Isotope) = iso.element
+"""
+    name(iso::Isotope)
+get the name of the isotope
+"""
 name(iso::Isotope) = iso.element * string(getA(iso))
+"""
+    decaymode(iso::Isotope)
+get the decay mode of the isotope
+"""
 decaymode(iso::Isotope) = iso.decay_mode
+"""
+    mass(iso::Isotope)
+get the mass of the isotope
+"""
 mass(iso::Isotope) = iso.mass
+"""
+    average_binding_energy(iso::Isotope)
+get the average binding energy of the isotope
+"""
+average_binding_energy(iso::Isotope) = iso.binding_energy
+"""
+    binding_energy(iso::Isotope)
+get the binding energy of the isotope
+"""
 binding_energy(iso::Isotope) = iso.binding_energy * getA(iso)
+"""
+    beta_decay_energy(iso::Isotope)
+get the beta decay energy of the isotope
+"""
 beta_decay_energy(iso::Isotope) = iso.beta_decay_energy
+"""
+    atomic_mass(iso::Isotope)
+get the atomic mass of the isotope
+"""
 atomic_mass(iso::Isotope) = iso.atomic_mass
 
 
@@ -128,6 +178,6 @@ function load_ame2020(fname::AbstractString)
         push!(ame2020, iso)
     end
     close(fp)
-    sort!(ame2020, by = x -> (getZ(x), getN(x)))
+    sort!(ame2020, by=x -> (getZ(x), getN(x)))
     return ame2020
 end

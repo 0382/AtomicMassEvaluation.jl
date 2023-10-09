@@ -10,7 +10,9 @@ include("util.jl")
 export AME2020,
     Isotope, getZ, getN, getA,
     element, name, decaymode,
-    mass, binding_energy, beta_decay_energy, atomic_mass
+    mass, binding_energy,
+    average_binding_energy,
+    beta_decay_energy, atomic_mass
 
 # Write your package code here.
 
