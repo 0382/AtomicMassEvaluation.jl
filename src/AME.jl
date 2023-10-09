@@ -4,6 +4,11 @@ using Measurements
 
 include("constants.jl")
 include("Isotope.jl")
+
+"""
+    AME2020
+the AME2020 dataset
+"""
 const AME2020 = Ref{Vector{Isotope}}()
 include("util.jl")
 
