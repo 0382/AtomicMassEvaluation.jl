@@ -1,10 +1,10 @@
 using Documenter
 push!(LOAD_PATH, "../src")
-using AME
+using AtomicMassEvaluation
 
 makedocs(
-    modules = [AME],
-    sitename = "AME.jl",
+    modules = [AtomicMassEvaluation],
+    sitename = "AtomicMassEvaluation.jl",
     clean = false,
     pages = [
         "Home" => "index.md"
@@ -12,6 +12,6 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/0382/AME.jl.git",
+    repo = "github.com/0382/AtomicMassEvaluation.jl.git",
     target = "build/"
 )

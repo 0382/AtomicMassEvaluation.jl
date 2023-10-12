@@ -1,8 +1,8 @@
-using AME
+using AtomicMassEvaluation
 using Test
 using Measurements
 
-@testset "AME.jl" begin
+@testset "AME2020" begin
     O16 = get(AME2020, "O16")
     @test getZ(O16) == 8
     @test getN(O16) == 8

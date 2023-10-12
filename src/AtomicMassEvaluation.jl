@@ -1,4 +1,4 @@
-module AME
+module AtomicMassEvaluation
 
 using Measurements
 

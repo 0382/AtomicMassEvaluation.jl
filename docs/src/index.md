@@ -8,7 +8,7 @@ push!(LOAD_PATH, "../../src") # hide
 ```
 
 ```@example example
-using AME
+using AtomicMassEvaluation
 He4 = get(AME2020, "He4")
 binding_energy(He4)
 ```
