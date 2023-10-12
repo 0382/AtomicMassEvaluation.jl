@@ -4,7 +4,7 @@
 [![Build Status](https://github.com/0382/AtomicMassEvaluation.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/0382/AtomicMassEvaluation.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/0382/AtomicMassEvaluation.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/0382/AtomicMassEvaluation.jl)
 
-Some data set from Atomic Mass Data Center.
+Atomic Mass Evaluation dataset from Atomic Mass Data Center.
 
 ### Usage
 ```julia-repl
