@@ -2,6 +2,16 @@ using AtomicMassEvaluation
 using Test
 using Measurements
 
+@testset "Isotope" begin
+    Ne20 = Isotope("Ne20")
+    @test getZ(Ne20) == 10
+    @test getN(Ne20) == 10
+    @test getA(Ne20) == 20
+    @test element(Ne20) == "Ne"
+    @test name(Ne20) == "Ne20"
+    @test Isotope(Ne20) == Isotope(10, 10)
+end
+
 @testset "AME2020" begin
     O16 = get(AME2020, "O16")
     @test getZ(O16) == 8

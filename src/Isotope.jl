@@ -1,12 +1,87 @@
 """
-    Isotope
-Isotope is a struct that contains the information of an isotope.
-The information includes the proton number, neutron number, element symbol, decay mode, mass, binding energy, beta decay energy, and atomic mass.
+    struct Isotope
+        Z::Int
+        N::Int
+    end
+Isotope struct, constructors as follows:
+```julia
+Isotope(iso::Isotope)
+Isotope(Z::Integer, N::Integer)
+Isotope(name::AbstractString) # parse the name of the isotope, e.g. `Ne20`
+```
 """
 struct Isotope
-    N::Int
     Z::Int
-    element::String
+    N::Int
+    Isotope(Z::Integer, N::Integer) = begin
+        Z >= 0 || error("Z must be non-negative")
+        N >= 0 || error("N must be non-negative")
+        Z <= 118 || error("Z must be less than or equal to 118")
+        new(Z, N)
+    end
+end
+
+Isotope(iso::Isotope) = iso
+Isotope(name::AbstractString) = parse(Isotope, name)
+
+Base.parse(::Type{Isotope}, str::AbstractString)::Isotope = begin
+    m = match(r"([A-Z][a-z]*)(\d{1,3})", str)
+    m === nothing && error("match error in parsing '$str'")
+    name = m.captures[1]
+    A = parse(Int, m.captures[2])
+    A > 0 || error("$str isotope has a non-positive mass number $A")
+    Z = findfirst(x -> x == name, isotope_names)
+    Z === nothing && error("no such element '$name'")
+    Z = Z - 1
+    N = A - Z
+    N >= 0 || error("$str isotope has a negative neutron number $N")
+    Isotope(Z, N)
+end
+
+"""
+    getZ(iso::Isotope)
+get the proton number of the isotope
+"""
+getZ(iso::Isotope) = iso.Z
+"""
+    getN(iso::Isotope)
+get the neutron number of the isotope
+"""
+getN(iso::Isotope) = iso.N
+"""
+    getA(iso::Isotope)
+get the mass number of the isotope
+"""
+getA(iso::Isotope) = iso.Z + iso.N
+
+"""
+    element(iso::Isotope)
+get the element symbol of the isotope
+"""
+element(iso::Isotope) = isotope_names[iso.Z + 1]
+
+"""
+    name(iso::Isotope)
+get the name of the isotope
+"""
+name(iso::Isotope) = element(iso) * string(getA(iso))
+
+Base.show(io::IO, ::MIME"text/plain", iso::Isotope) = print(io, name(iso))
+
+Base.show(io::IO, ::MIME"text/markdown", iso::Isotope) = begin
+    ele = element(iso)
+    A = getA(iso)
+    show(io, "text/markdown", Markdown.parse("``^{$A}\\mathrm{$ele}``"))
+end
+
+
+"""
+    IsotopeData
+Isotope is a struct that contains the information of an isotope.
+The information includes the decay mode, mass, binding energy, beta decay energy, and atomic mass.
+"""
+struct IsotopeData
+    isotope::Isotope
     decay_mode::String
     mass::Measurement{Float64}
     binding_energy::Measurement{Float64}
@@ -16,8 +91,8 @@ struct Isotope
     binding_energy_is_estimated::Bool
     beta_decay_energy_is_estimated::Bool
     atomic_mass_is_estimated::Bool
-    function Isotope(N::Int, Z::Int, element::AbstractString, decay_mode::AbstractString, mass::Measurement{Float64}, binding_energy::Measurement{Float64}, beta_decay_energy::Union{Measurement{Float64},Missing}, atomic_mass::Measurement{Float64}, mass_is_esitimated::Bool, binding_energy_is_estimated::Bool, beta_decay_energy_is_estimated::Bool, atomic_mass_is_estimated::Bool)
-        return new(N, Z, element, decay_mode, mass, binding_energy, beta_decay_energy, atomic_mass, mass_is_esitimated, binding_energy_is_estimated, beta_decay_energy_is_estimated, atomic_mass_is_estimated)
+    function IsotopeData(iso::Isotope, decay_mode::AbstractString, mass::Measurement{Float64}, binding_energy::Measurement{Float64}, beta_decay_energy::Union{Measurement{Float64},Missing}, atomic_mass::Measurement{Float64}, mass_is_esitimated::Bool, binding_energy_is_estimated::Bool, beta_decay_energy_is_estimated::Bool, atomic_mass_is_estimated::Bool)
+        return new(iso, decay_mode, mass, binding_energy, beta_decay_energy, atomic_mass, mass_is_esitimated, binding_energy_is_estimated, beta_decay_energy_is_estimated, atomic_mass_is_estimated)
     end
 end
 
@@ -25,8 +100,10 @@ function parse_ame2020_line(line::AbstractString)
     N = parse(Int, line[5:9])
     Z = parse(Int, line[10:14])
     A = parse(Int, line[15:19])
-    N + Z == A || error("N + Z != A")
-    element = strip(line[21:23])
+    @assert N + Z == A
+    iso = Isotope(Z, N)
+    ele = strip(line[21:23])
+    @assert ele == element(iso)
     decay_mode = strip(line[24:27])
 
     # parse mass
@@ -92,83 +169,83 @@ function parse_ame2020_line(line::AbstractString)
     end
     atomic_mass_uncertainty = parse(Float64, tstr) / 1000_000
     atomic_mass = measurement(atomic_mass_value, atomic_mass_uncertainty)
-    return Isotope(N, Z, element, decay_mode, mass, binding_energy, beta_decay_energy, atomic_mass, mass_is_esitimated, binding_energy_is_estimated, beta_decay_energy_is_estimated, atomic_mass_is_estimated)
+    return IsotopeData(iso, decay_mode, mass, binding_energy, beta_decay_energy, atomic_mass, mass_is_esitimated, binding_energy_is_estimated, beta_decay_energy_is_estimated, atomic_mass_is_estimated)
 end
 
 """
-    getZ(iso::Isotope)
-get the proton number of the isotope
+    getZ(isodata::IsotopeData)
+get the proton number of the `IsotopeData`
 """
-getZ(iso::Isotope) = iso.Z
+getZ(isodata::IsotopeData) = getZ(isodata.isotope)
 """
-    getN(iso::Isotope)
-get the neutron number of the isotope
+    getN(isodata::IsotopeData)
+get the neutron number of the `IsotopeData`
 """
-getN(iso::Isotope) = iso.N
+getN(isodata::IsotopeData) = getN(isodata.isotope)
 """
-    getA(iso::Isotope)
-get the mass number of the isotope
+    getA(isodata::IsotopeData)
+get the mass number of the `IsotopeData`
 """
-getA(iso::Isotope) = iso.N + iso.Z
+getA(isodata::IsotopeData) = getA(isodata.isotope)
 """
-    element(iso::Isotope)
-get the element symbol of the isotope
+    element(isodata::IsotopeData)
+get the element symbol of the `IsotopeData`
 """
-element(iso::Isotope) = iso.element
+element(isodata::IsotopeData) = element(isodata.isotope)
 """
-    name(iso::Isotope)
-get the name of the isotope
+    name(isodata::IsotopeData)
+get the name of the `IsotopeData`
 """
-name(iso::Isotope) = iso.element * string(getA(iso))
+name(isodata::IsotopeData) = name(isodata.isotope)
 """
-    decaymode(iso::Isotope)
-get the decay mode of the isotope
+    decaymode(isodata::IsotopeData)
+get the decay mode of the `IsotopeData`
 """
-decaymode(iso::Isotope) = iso.decay_mode
+decaymode(isodata::IsotopeData) = isodata.decay_mode
 """
-    mass(iso::Isotope)
-get the mass of the isotope
+    mass(isodata::IsotopeData)
+get the mass of the `IsotopeData`
 """
-mass(iso::Isotope) = iso.mass
+mass(isodata::IsotopeData) = isodata.mass
 """
-    average_binding_energy(iso::Isotope)
-get the average binding energy of the isotope
+    average_binding_energy(isodata::IsotopeData)
+get the average binding energy of the `IsotopeData`
 """
-average_binding_energy(iso::Isotope) = iso.binding_energy
+average_binding_energy(isodata::IsotopeData) = isodata.binding_energy
 """
-    binding_energy(iso::Isotope)
-get the binding energy of the isotope
+    binding_energy(isodata::IsotopeData)
+get the binding energy of the `IsotopeData`
 """
-binding_energy(iso::Isotope) = iso.binding_energy * getA(iso)
+binding_energy(isodata::IsotopeData) = isodata.binding_energy * getA(isodata)
 """
-    beta_decay_energy(iso::Isotope)
-get the beta decay energy of the isotope
+    beta_decay_energy(isodata::IsotopeData)
+get the beta decay energy of the `IsotopeData`
 """
-beta_decay_energy(iso::Isotope) = iso.beta_decay_energy
+beta_decay_energy(isodata::IsotopeData) = isodata.beta_decay_energy
 """
-    atomic_mass(iso::Isotope)
-get the atomic mass of the isotope
+    atomic_mass(isodata::IsotopeData)
+get the atomic mass of the `IsotopeData`
 """
-atomic_mass(iso::Isotope) = iso.atomic_mass
+atomic_mass(isodata::IsotopeData) = isodata.atomic_mass
 
 
-Base.show(io::IO, iso::Isotope) = begin
-    print(io, "Isotope(")
-    print(io, name(iso))
+Base.show(io::IO, isodata::IsotopeData) = begin
+    print(io, "IsotopeData(")
+    print(io, name(isodata))
     print(io, ", ")
-    print(io, mass(iso))
+    print(io, mass(isodata))
     print(io, ", ")
-    print(io, binding_energy(iso))
+    print(io, binding_energy(isodata))
     print(io, ", ")
-    print(io, beta_decay_energy(iso))
+    print(io, beta_decay_energy(isodata))
     print(io, ", ")
-    print(io, atomic_mass(iso))
+    print(io, atomic_mass(isodata))
     print(io, ")")
 end
 
 
 function load_ame2020(fname::AbstractString)
-    ame2020 = Vector{Isotope}()
+    ame2020 = Vector{IsotopeData}()
     fp = open(fname, "r")
     for i = 1:36
         readline(fp)

@@ -11,7 +11,7 @@ Atomic Mass Evaluation dataset from Atomic Mass Data Center.
 julia> using AtomicMassEvaluation
 
 julia> He4 = get(AME2020, "He4")
-Isotope(He4, 2.42491587 ± 1.5e-7, 28.2956624 ± 8.0e-7, -22.9 ± 0.21, 4.00260325413 ± 1.6e-10)
+IsotopeData(He4, 2.42491587 ± 1.5e-7, 28.2956624 ± 8.0e-7, -22.9 ± 0.21, 4.00260325413 ± 1.6e-10)
 
 julia> binding_energy(He4)
 28.2956624 ± 8.0e-7

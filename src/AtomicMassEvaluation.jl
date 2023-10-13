@@ -1,5 +1,6 @@
 module AtomicMassEvaluation
 
+using Markdown
 using Measurements
 
 include("constants.jl")
@@ -9,11 +10,11 @@ include("Isotope.jl")
     AME2020
 the AME2020 dataset
 """
-const AME2020 = Ref{Vector{Isotope}}()
+const AME2020 = Ref{Vector{IsotopeData}}()
 include("util.jl")
 
-export AME2020,
-    Isotope, getZ, getN, getA,
+export AME2020, Isotope, IsotopeData,
+    getZ, getN, getA,
     element, name, decaymode,
     mass, binding_energy,
     average_binding_energy,

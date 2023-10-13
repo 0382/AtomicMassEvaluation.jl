@@ -16,6 +16,7 @@ binding_energy(He4)
 ### Types
 ```@docs
 Isotope
+IsotopeData
 ```
 
 ### Dateset
@@ -36,7 +37,8 @@ binding_energy
 average_binding_energy
 beta_decay_energy
 atomic_mass
-Base.get(::Ref{Vector{Isotope}}, ::AbstractString)
+Base.get(::Ref{Vector{IsotopeData}}, ::AbstractString)
+Base.get(::Ref{Vector{IsotopeData}}, ::Isotope)
 ```
 
 ### Reference
