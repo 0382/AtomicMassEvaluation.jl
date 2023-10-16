@@ -1,7 +1,7 @@
 name = "AtomicMassEvaluation"
 uuid = "9f60cadd-00eb-4e57-b715-beb4ff532cb8"
 authors = ["jinshaoliang <18322825326@163.com> and contributors"]
-version = "0.0.1"
+version = "0.0.2"
 
 [deps]
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
